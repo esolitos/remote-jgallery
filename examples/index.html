@@ -1,0 +1,29 @@
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>Remote jGallery &bull; Example</title>
+  
+  
+  <script src="//code.jquery.com/jquery-1.8.2.min.js"></script>
+  
+  <!-- <script type="text/javascript" charset="utf-8" src="../remote-jgallery.jquery.min.js"></script> -->
+  <script type="text/javascript" charset="utf-8" src="../source/remote-jgallery.min.js"></script>
+  
+  <script type="text/javascript">
+  jQuery(window).ready(function($) {
+    $.fn.remotejGallery.style.slideshowBackdrop['background-color'] = '#f8e8d8';
+
+    jQuery("#container").remotejGallery({
+      galleryGroupID: 1,
+      wrapperID: "remote-jgallery-container"
+    });
+  });
+  </script>
+</head>
+<body>
+  <h1 id="page-title">Remote jGallery &bull; Example</h1>
+  <p>In this you can see the result of the script with some css applied.</p>
+  <br>
+  <div id="remote-jgallery-container"></div>
+</body>
+</html>

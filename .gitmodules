@@ -1,0 +1,6 @@
+[submodule "source/waitForImages-1.5"]
+	path = source/waitForImages-1.5
+	url = git@github.com:alexanderdickson/waitForImages.git
+[submodule "source/carouFredSel-6.2.1"]
+	path = source/carouFredSel-6.2.1
+	url = git@github.com:gilbitron/carouFredSel.git
