@@ -10,13 +10,21 @@
   var methods = {
     init : function(options) {
       var settings = $.fn.remotejGallery.defaults = $.extend({}, $.fn.remotejGallery.defaults, options );
+      
+      if(settings.debug) {
+        console.log("--- Remote jGallery: init ---");
+        console.log("Loaded Settings:");
+        console.log(settings);
+      }
+      
+      if ( settings.remoteURL != undefined ) {
 
         $.when(
           $.getScript( settings.scripts.carouFredSel ),
-          $.getScript( settings.scripts.waitForImages ),
-          $.Deferred(function( deferred ){
-            $( deferred.resolve );
-          })
+          $.getScript( settings.scripts.waitForImages )//,
+          // $.Deferred(function( deferred ){
+          //   $( deferred.resolve );
+          // })
         ).done($.ajax({
           // Getting the website data trough JSONP
           url: settings.remoteURL+'?callback=?',
@@ -25,29 +33,33 @@
           success: function(data, textStatus, xhr) {
             // If everything is right the server should have returned data.result as TRUE or
             // a positive number, so we check for that and if that's right we call the build method.
-            if( data.result ) {
-              methods.build(data.data.galleries);
+            if( data.success ) {
+              $.fn.remotejGallery.defaults.baseURL = data.base_url;
+              methods.build(data.galleries);
             }
             else {
               alert("Galleries not loaded. Check console for more informations.")
 
-              if(defaults.debug) {
-                console.log("IrisLoginGallery: ERROR malformed data received!");
+              if(settings.debug) {
+                console.log("remotejGallery: ERROR malformed data received!");
                 console.log(data);
               }
             }
 
-          },
+          }, // onSuccess
           error: function(xhr, textStatus, errorThrown) {
-            document.console.log("IrisLoginGallery: ERROR while getting data.")
+            console.error("remotejGallery: ERROR while getting data.")
 
-            if(defaults.debug) {
-              console.log(xhr);
-              // console.log(textStatus);
+            if(settings.debug) {
               console.log(errorThrown);
+              console.log(xhr);
             }
-          }
-        }));	
+          } //onError
+        }));
+      }
+      else if ( settings.debug ) {
+        console.error("Remote Server URL not defined. Please use the option 'remoteURL' to set it.");
+      }
     },
 
 
@@ -92,8 +104,8 @@
               'class': "gallery-image",
               title: imageData.title,
               alt: imageData.descr,
-              src: setup.irisLogin + imageData.thumb,
-              'data-large': setup.irisLogin + imageData.full_size,
+              src: setup.baseURL + imageData.thumb,
+              'data-large': setup.baseURL + imageData.full_size,
               'data-gid': currGallery.gid,
               'data-imgID': imageData.id
             }).bind('click', function(ev){
@@ -357,17 +369,18 @@
 	
     $.fn.remotejGallery.defaults = {
       debug: false,
+      carouFredSel_DEBUG: false,
+      
       // These are the defaults.
-      irisLoginAPI: "http://api.irislogin.it/",
-      irisLogin: "http://irislogin.it/",
+      baseURL: false,
       images: {
         // closeImage: "http://api.irislogin.it/public/img/btn-del-small.png",
         closeImage: "http://api.irislogin.it/public/img/btn-del-over-small.png",
         loaderBackImage: "http://api.irislogin.it/public/img/ajax-loader-big.gif"
       },
       scripts: {
-        carouFredSel: "source/carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js",
-        waitForImages: "http://api.irislogin.it/public/js/jquery.waitForImages.min.js"
+        carouFredSel: "../source/carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js",
+        waitForImages: "../source/waitForImages-1.5/dist/jquery.waitforimages.min.js"
       },
 		
       galleries: [],
@@ -387,10 +400,7 @@
       slideshowBackdropID: "slideshow-overall-backdrop",
       slideshowWrapperID: "slideshow-wrapper",
       slideshowCaruselID: "slideshow-carusel",
-      slideshowThumbnailID: "slideshow-thumb",
-		
-		
-      carouFredSel_DEBUG: false
+      slideshowThumbnailID: "slideshow-thumb"
     };
 	
     $.fn.remotejGallery.style = {

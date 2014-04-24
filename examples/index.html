@@ -7,13 +7,16 @@
   <script src="//code.jquery.com/jquery-1.8.2.min.js"></script>
   
   <!-- <script type="text/javascript" charset="utf-8" src="../remote-jgallery.jquery.min.js"></script> -->
-  <script type="text/javascript" charset="utf-8" src="../source/remote-jgallery.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../remote-jgallery.jquery.js"></script>
   
   <script type="text/javascript">
   jQuery(window).ready(function($) {
-    $.fn.remotejGallery.style.slideshowBackdrop['background-color'] = '#f8e8d8';
+    $.fn.remotejGallery.style.slideshowBackdrop['background-color'] = 'rgba(0,0,0,0.3)';
 
     jQuery("#container").remotejGallery({
+      
+      remoteURL: "http://test.dev/remote-jgallery/examples/remote-server.php",
+      
       galleryGroupID: 1,
       wrapperID: "remote-jgallery-container"
     });

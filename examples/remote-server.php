@@ -1,7 +1,9 @@
 <?php 
 
 $success = TRUE;
+
 $data = array(
+  'success' => $success,
   'message' => 'Some Message',
   'error' => 'Some Error', 
   'base_url' => 'http://test.dev/',
@@ -38,19 +40,19 @@ $data = array(
           'id' => 11,
           'gallery_id' => 2,
           'full_size' => 'remote-jgallery/examples/images/2/abc.jpg',
-          'thumb' => 'remote-jgallery/examples/images/2/thumb/a_thumb.gif',
+          'thumb' => 'remote-jgallery/examples/images/2/thumb/thumb_a.gif',
         ),
         array(
           'id' => 12,
           'gallery_id' => 2,
           'full_size' => 'remote-jgallery/examples/images/2/def.jpg',
-          'thumb' => 'remote-jgallery/examples/images/2/thumb/b_thumb.gif',
+          'thumb' => 'remote-jgallery/examples/images/2/thumb/thumb_b.gif',
         ),
         array(
           'id' => 13,
           'gallery_id' => 2,
           'full_size' => 'remote-jgallery/examples/images/2/ghi.jpg',
-          'thumb' => 'remote-jgallery/examples/images/2/thumb/g_thumb.gif',
+          'thumb' => 'remote-jgallery/examples/images/2/thumb/thumb_c.gif',
         )
       ),
     ),
@@ -58,13 +60,13 @@ $data = array(
 );
 
 
-$jdata = json_encode( array('result' => $success, 'data' => $data) );
+$jdata = json_encode( $data );
   
 if(filter_has_var(INPUT_GET,  'callback')) {
   header('Content-Type: text/javascript; charset=utf8');
   header('Access-Control-Allow-Origin: *');
 
-  $callback = filter_input(INPUT_GET, 'callback', FILTER_CALLBACK, array('options'=>'convertSpace'));
+  $callback = filter_input(INPUT_GET, 'callback', FILTER_SANITIZE_STRING, array('options'=>'convertSpace'));
   echo $callback.'('.$jdata.');';
 
 } else {
