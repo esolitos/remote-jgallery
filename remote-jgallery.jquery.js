@@ -71,85 +71,34 @@ var methods = {
 		}
 		return this;
 	},
-
-
-	prepare : function( imgID, gID, options ) {},
-
-
-	start : function( imgID, gID, options ) {
-
-		setup = $.extend({}, $.fn.remotejGallery.defaults, options);
-		var gallID = setup.galleryID+gID;
-
-		$carus = $("#"+setup.slideshowCaruselID);
-		$thumbs = $("#"+setup.slideshowThumbnailID);
-
-		$carus.carouFredSel({
-			width: "100%",
-			height: "100%",
-			items: {
-				start: $('#'+setup.slideshowCaruselID+' img[data-imgid='+ imgID +']'),
-				visible: 1,
-				height: wrapperSize.height,
-			},
-			scroll: {
-				fx: 'crossfade',
-				onBefore: function( data ) {
-					imgID = data.items.visible.data('imgid');
-					pos = Math.floor(setup.thumbs_visible / 2) - 1;
-
-					$thumbs.trigger( 'slideTo', [ $('#'+setup.slideshowThumbnailID+' img[data-imgid='+ imgID +']'), - pos  ] );
-				}
-			},
-			prev: {key: 'left'},
-			next: {key: 'right'},
-			onCreate: function(data) {
-				$('#'+setup.slideshowWrapperID).animate({opacity: 1});
-			}
-		}, {debug: setup.carouFredSel_DEBUG});
-
-		$thumbs.carouFredSel({
-			auto: false,
-			width: '100%'
-		}, {debug: setup.carouFredSel_DEBUG});
-
-		setup.thumbs_visible = $thumbs.children('img').size();
-		$carus.trigger("play", [0, true]);
-  
-		return this;
-	},
     
 
 	stop : function() {
 
-		$("#"+setup.slideshowCaruselID).trigger('stop');
-		$("#"+setup.slideshowThumbnailID).trigger('stop');
-  
-		return this;
+		$carus.trigger('stop');
+		$thumbs.trigger('stop');
 	},
     
 
-	update : function( content ) {
-		$("#"+setup.slideshowCaruselID).trigger('updateSizes');
-		$("#"+setup.slideshowThumbnailID).trigger('updateSizes');
+	update : function( ) {
+		$carus.trigger('updateSizes');
+		$thumbs.trigger('updateSizes');
   
 		return this;
 	},
 
 	destroy: function(options) {
-		setup = $.extend({}, $.fn.remotejGallery.defaults, options);
-		var wrapper = document.getElementById(setup.slideshowWrapperID);
-		var bg = document.getElementById(setup.slideshowBackdropID);
+		var wrapper = document.getElementById( $.fn.remotejGallery.attributes.slideshowWrapper.id );
+		var bg = document.getElementById( $.fn.remotejGallery.attributes.slideshowBackdrop.id );
 
-		methods.stop();
-
-		$(wrapper).animate({opacity:0}, 200, function(){
+		$(wrapper).animate({opacity:0}, 'fast', function(){
 			wrapper.parentNode.removeChild( wrapper );
 		});
 
-		$(bg).animate({opacity:0}, 200, function() {
-			$("#"+setup.slideshowCaruselID).trigger('destroy');
-			$("#"+setup.slideshowThumbnailID).trigger('destroy');
+		$(bg).animate({opacity:0}, 'fast', function() {
+			$carus.trigger('destroy');
+			$thumbs.trigger('destroy');
+			
 			bg.parentNode.removeChild(bg);
 		});
 
@@ -202,7 +151,6 @@ function build_gallery( galleries, settings ) {
 			image = $("<img/>")
 				.attr( $.extend( imageAttributes, attributes.galleryImage ) )
 				.css( style.galleryImage )
-				// .data( imageData )
 				.on('click', {"settings": settings}, prepare_slideshow);
 
 			galleryContainer.prepend( image );
@@ -231,8 +179,8 @@ function prepare_slideshow( event ) {
 		$slideshowBackdrop = $( "<div/>" );
 	
 	$wrapper = $("<div/>");
-	$thumbs = $galleryContainer.clone();
-	$carus = $galleryContainer.clone();;
+	$thumbs = $galleryContainer.clone().removeAttr('style');
+	$carus = $galleryContainer.clone().removeAttr('style');
 	
 	$slideshowBackdrop.attr( attributes.slideshowBackdrop )
 		.css( "min-height", windowWidth )
@@ -292,7 +240,6 @@ function prepare_slideshow( event ) {
 
 	$wrapper.append( $carus );
 	$wrapper.append( $thumbs );
-	// $wrapper.appendTo( $slideshowBackdrop );
 
 	$thumbs.children('img')
 		.css( 'cursor', 'pointer' )
@@ -340,17 +287,55 @@ function prepare_slideshow( event ) {
 	$('body').append($slideshowBackdrop);
 	$('body').append($wrapper);
 
-	// methods.start(imgID, gID, options);
 	$slideshowBackdrop.animate({opacity: 1}, 'fast');
 
+	
 	$carus.waitForImages({
 		finished: function() {
 			$wrapper.animate({opacity: 1}, 'fast');
 			setTimeout(function () {
-				methods.start(imageID, galleryID, settings);
+				start_animation(imageID, galleryID, settings);
 			}, 50);
 		},
 	});
+	
+}
+
+function start_animation(imageID, galleryID, settings) {
+	
+	$wrapper.animate({opacity: 1}, 'fast');
+	
+	$carus.carouFredSel({
+		width: "100%",
+		height: "100%",
+		items: {
+			start: $('img[data-imgid='+ imageID +']'),
+			visible: 1,
+			height: wrapperSize.height,
+		},
+		scroll: {
+			fx: 'crossfade',
+			onBefore: function( data ) {
+				imgID = data.items.visible.data('imgid');
+				pos = Math.floor(settings.thumbs_visible / 2) - 1;
+
+				$thumbs.trigger( 'slideTo', [ $thumbs.find('img[data-imgid='+ imageID +']'), - pos  ] );
+			}
+		},
+		prev: {key: 'left'},
+		next: {key: 'right'},
+		// onCreate: function(data) {
+			// $('#'+setup.slideshowWrapperID).animate({opacity: 1});
+		// }
+	}, {debug: settings.carouFredSel_DEBUG});
+
+	$thumbs.carouFredSel({
+		auto: false,
+		width: '100%'
+	}, {debug: settings.carouFredSel_DEBUG});
+
+	settings.thumbs_visible = $thumbs.children('img').size();
+	$carus.trigger("play", [0, true]);
 }
 
 
@@ -472,7 +457,7 @@ $.fn.remotejGallery.style = {
 		"left": 0,
 		"width": "100%",
 		"height": "100%",
-		"background-image": "url('/source/images/ajax-loader.gif')",
+		"background-image": "url('../source/images/ajax-loader.gif')",
 		"background-repeat": "no-repeat",
 		"background-position": "center",
 		"background-color": "#FAFAFA",

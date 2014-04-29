@@ -6,19 +6,15 @@
   
   <script src="//code.jquery.com/jquery-1.8.2.min.js"></script>
   
-  <!-- <script type="text/javascript" charset="utf-8" src="../remote-jgallery.jquery.min.js"></script> -->
   <script type="text/javascript" charset="utf-8" src="../remote-jgallery.jquery.js"></script>
   
   <script type="text/javascript">
   jQuery(window).ready(function($) {
+    // example how to chanbge default background color.
     $.fn.remotejGallery.style.slideshowBackdrop['background-color'] = 'rgba(0,0,0,0.3)';
 
-    jQuery("#container").remotejGallery({
-      
-      remoteURL: "http://test.dev/remote-jgallery/examples/remote-server.php",
-      
-      galleryGroupID: 1,
-      wrapperID: "remote-jgallery-container"
+    jQuery("#remote-jgallery-container").remotejGallery({
+      remoteURL: "http://test.dev/remote-jgallery/examples/remote-server.php"
     });
   });
   </script>

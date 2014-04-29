@@ -20,21 +20,23 @@ To use this plugin a little of setup is required.
 * Next you must include the javascript into your page and setup the minimal
     configuration:
 
+    ```javascript
     <script type="text/javascript" charset="utf-8" src="../remote-jgallery.jquery.js"></script>
     <script type="text/javascript">
     jQuery(window).ready(function($) {
-      jQuery().remotejGallery({
+      jQuery("#remote-jgallery-container").remotejGallery({
         remoteURL: "http://example.com/jgallery-remote-server.php",
-        wrapperID: "remote-jgallery-container"
       });
     });
     </script>
+    ```
     
 * As last thing you need an empty html container where your gallery gallery
     will be built:
 
+    ```html
     <div id="remote-jgallery-container"></div>
-
+    ```
 
 That's all the basic configuration you need to make it work, naturally you'll probably want some customization, in this case please check the section **Plugin Documentation** of this document.
 
@@ -44,3 +46,5 @@ Plugin Documentation
 --------------------
 
 In this section all the options of this plugin are explained in detail.
+
+    TODO
